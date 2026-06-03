@@ -76,7 +76,7 @@ export function GameGate({ problemId, children, avatarUrl = '/avatar.jpg' }: Gam
           }}
         >
           <span>🔓</span>
-          <span>Lời giải đã được mở khóa</span>
+          <span>Bài toán đã được mở khóa</span>
         </div>
         {children}
       </div>
@@ -118,7 +118,7 @@ export function GameGate({ problemId, children, avatarUrl = '/avatar.jpg' }: Gam
             color: '#1d1d1f',
             letterSpacing: '-0.374px',
           }}>
-            Lời giải đang bị khóa
+            Nội dung đang bị khóa
           </p>
           <p style={{
             margin: 0,

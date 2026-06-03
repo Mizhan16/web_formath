@@ -3,27 +3,27 @@ import Link from 'next/link'
 import { PROBLEMS } from '@/lib/problems'
 import { SolutionContent } from '@/components/ui/SolutionContent'
 import { GameGate } from '@/components/game/GameGate'
-
+ 
 interface PageProps {
   params: { id: string }
 }
-
+ 
 export function generateStaticParams() {
   return PROBLEMS.map(p => ({ id: p.id }))
 }
-
+ 
 export default function ProblemPage({ params }: PageProps) {
   const problem = PROBLEMS.find(p => p.id === params.id)
   if (!problem) notFound()
-
+ 
   const difficultyColor =
     problem.difficulty === 'Dễ' ? '#34c759'
     : problem.difficulty === 'Trung bình' ? '#ff9f0a'
     : '#ff3b30'
-
+ 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 24px 80px' }}>
-
+ 
       {/* ── Breadcrumb ── */}
       <nav style={{
         display: 'flex',
@@ -41,8 +41,8 @@ export default function ProblemPage({ params }: PageProps) {
         <span>›</span>
         <span style={{ color: '#1d1d1f' }}>{problem.title}</span>
       </nav>
-
-      {/* ── Header ── */}
+ 
+      {/* ── Header: Tiêu đề + tags (luôn hiển thị) ── */}
       <header style={{ marginBottom: 48 }}>
         <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
           <span style={{
@@ -69,7 +69,7 @@ export default function ProblemPage({ params }: PageProps) {
             {problem.difficulty}
           </span>
         </div>
-
+ 
         <h1 style={{
           fontFamily: 'SF Pro Display, -apple-system, system-ui, sans-serif',
           fontSize: 'clamp(28px, 5vw, 40px)',
@@ -82,8 +82,8 @@ export default function ProblemPage({ params }: PageProps) {
           {problem.title}
         </h1>
       </header>
-
-      {/* ── Section 1: Đề bài ── */}
+ 
+      {/* ── Section 1: Đề bài (luôn hiển thị) ── */}
       <section style={{ marginBottom: 56 }}>
         <SectionLabel emoji="📋" text="Đề bài" />
         <div style={{
@@ -100,77 +100,79 @@ export default function ProblemPage({ params }: PageProps) {
           {problem.description}
         </div>
       </section>
-
-      {/* ── Section 2: Video giải ── */}
-      {problem.videoUrl && (
+ 
+      {/* ── Sections 2, 3, 4: Tất cả bị khóa bởi GameGate ── */}
+      <GameGate problemId={problem.id}>
+        {/* ── Section 2: Video giải ── */}
+        {problem.videoUrl && (
+          <section style={{ marginBottom: 56 }}>
+            <SectionLabel emoji="🎬" text="Video giải" />
+            <div style={{
+              borderRadius: 18,
+              overflow: 'hidden',
+              border: '1px solid #e0e0e0',
+              aspectRatio: '16/9',
+              background: '#000',
+            }}>
+              <iframe
+                src={problem.videoUrl}
+                title="Video giải"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ width: '100%', height: '100%', display: 'block', border: 'none' }}
+              />
+            </div>
+          </section>
+        )}
+ 
+        {/* ── Section 3: Lý thuyết ── */}
         <section style={{ marginBottom: 56 }}>
-          <SectionLabel emoji="🎬" text="Video giải" />
-          <div style={{
-            borderRadius: 18,
-            overflow: 'hidden',
-            border: '1px solid #e0e0e0',
-            aspectRatio: '16/9',
-            background: '#000',
-          }}>
-            <iframe
-              src={problem.videoUrl}
-              title="Video giải"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ width: '100%', height: '100%', display: 'block', border: 'none' }}
-            />
+          <SectionLabel emoji="📚" text="Lý thuyết" />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {problem.theory.map((section, i) => (
+              <div key={i} style={{
+                background: '#ffffff',
+                border: '1px solid #e0e0e0',
+                borderRadius: 18,
+                padding: 24,
+              }}>
+                <h3 style={{
+                  fontFamily: 'SF Pro Display, -apple-system, system-ui, sans-serif',
+                  fontSize: 17,
+                  fontWeight: 600,
+                  color: '#1d1d1f',
+                  margin: '0 0 10px',
+                  letterSpacing: '-0.374px',
+                }}>
+                  {section.title}
+                </h3>
+                <p style={{
+                  fontFamily: 'SF Pro Text, -apple-system, system-ui, sans-serif',
+                  fontSize: 17,
+                  color: '#333333',
+                  margin: 0,
+                  lineHeight: 1.6,
+                  letterSpacing: '-0.374px',
+                  whiteSpace: 'pre-line',
+                }}>
+                  {section.content}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
-      )}
-
-      {/* ── Section 3: Lý thuyết ── */}
-      <section style={{ marginBottom: 56 }}>
-        <SectionLabel emoji="📚" text="Lý thuyết" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {problem.theory.map((section, i) => (
-            <div key={i} style={{
-              background: '#ffffff',
-              border: '1px solid #e0e0e0',
-              borderRadius: 18,
-              padding: 24,
-            }}>
-              <h3 style={{
-                fontFamily: 'SF Pro Display, -apple-system, system-ui, sans-serif',
-                fontSize: 17,
-                fontWeight: 600,
-                color: '#1d1d1f',
-                margin: '0 0 10px',
-                letterSpacing: '-0.374px',
-              }}>
-                {section.title}
-              </h3>
-              <p style={{
-                fontFamily: 'SF Pro Text, -apple-system, system-ui, sans-serif',
-                fontSize: 17,
-                color: '#333333',
-                margin: 0,
-                lineHeight: 1.6,
-                letterSpacing: '-0.374px',
-                whiteSpace: 'pre-line',
-              }}>
-                {section.content}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Section 4: Lời giải (locked behind GameGate) ── */}
-      <section>
-        <SectionLabel emoji="✏️" text="Lời giải" />
-        <GameGate problemId={problem.id}>
+ 
+        {/* ── Section 4: Lời giải ── */}
+        <section>
+          <SectionLabel emoji="✏️" text="Lời giải" />
           <SolutionContent steps={problem.solution} />
-        </GameGate>
-      </section>
+        </section>
+      </GameGate>
+ 
     </div>
   )
 }
-
+ 
 // ── Small helper component ────────────────────────────────────────────────────
 function SectionLabel({ emoji, text }: { emoji: string; text: string }) {
   return (
@@ -194,3 +196,4 @@ function SectionLabel({ emoji, text }: { emoji: string; text: string }) {
     </div>
   )
 }
+ 
