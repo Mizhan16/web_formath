@@ -23,7 +23,6 @@
     "postcss": "^8",
     "autoprefixer": "^10",
     "typescript": "^5",
-    "lint": "eslint",
     "@netlify/plugin-nextjs": "^5"
   }
 }
